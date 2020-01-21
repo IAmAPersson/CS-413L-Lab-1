@@ -85,10 +85,18 @@ filter:
 	B filter
 
 positive:
+	MOV R0, #1
+	B outputfilt
 
 negative:
+	MOV R0, #-1
+	B outputfilt
 
 zero:
+	MOV R0, #0
+
+outputfilt:
+	
 
 retplace:
 	MOV R7, #1
@@ -119,6 +127,12 @@ printarrloop:
 	BL printf
 	POP { LR }
 	POP { R4-R6 }
+	BX LR
+
+sgn:
+	CMP R0, #0
+	MOVGT R0, #1
+	MOVLT R0, #-1
 	BX LR
 
 .global printf
