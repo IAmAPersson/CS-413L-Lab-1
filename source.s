@@ -85,18 +85,36 @@ filter:
 	B filter
 
 positive:
-	MOV R0, #1
+	MOV R7, #1
 	B outputfilt
 
 negative:
-	MOV R0, #-1
+	MOV R7, #-1
 	B outputfilt
 
 zero:
-	MOV R0, #0
+	MOV R7, #0
 
 outputfilt:
-	
+	LDR R4, =arrC
+	MOV R5, #10
+outputfiltloop:
+	LDR R6, [R4], #4
+	MOV R0, R6
+	PUSH { LR }
+	BL sgn
+	CMP R0, R7
+	LDR R0, =perd
+	MOV R1, R6
+	BLEQ printf
+	POP { LR }
+	SUBS R5, #1
+	BNE outputfiltloop
+
+	LDR R0, =nl
+	PUSH { LR }
+	BL printf
+	POP { LR }
 
 retplace:
 	MOV R7, #1
