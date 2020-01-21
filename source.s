@@ -86,7 +86,7 @@ printarrloop:
 	PUSH { LR }
 	BL printf
 	POP { LR }
-	POP { R4-R5 }
+	POP { R4-R6 }
 	BX LR
 
 .global printf
