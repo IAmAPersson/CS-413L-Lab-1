@@ -6,6 +6,8 @@ arrB:
 	.word 78, -23, 96, -600, 7, 10, 99, -67, 89, 123
 arrC:
 	.skip 40
+inpval:
+	.word 0
 hellomsg:
 	.asciz "Hello! I will add these two arrays together...\n"
 arr1msg:
@@ -16,8 +18,12 @@ arr3msg:
 	.asciz "Sums: "
 perd:
 	.asciz "%d "
+perc:
+	.asciz "%c"
 nl:
 	.asciz "\n"
+filtermsg:
+	.asciz "Enter 'P' for positive, 'N' for negative, or 'Z' for zero, and I will output all values in the sum array that match that filter!\n"
 
 .text
 .equ elems, 10
@@ -57,6 +63,32 @@ printarrs:
 	LDR R2, =arrC
 	BL printarr
 	POP { LR }
+
+filter:
+	LDR R0, =filtermsg
+	PUSH { LR }
+	BL printf
+	POP { LR }
+	LDR R0, =perc
+	LDR R1, =inpval
+	PUSH { LR }
+	BL scanf
+	POP { LR }
+	LDR R0, =inpval
+	LDR R0, [R0]
+	CMP R0, #'P'
+	BEQ positive
+	CMP R0, #'N'
+	BEQ negative
+	CMP R0, #'Z'
+	BEQ zero
+	B filter
+
+positive:
+
+negative:
+
+zero:
 
 retplace:
 	MOV R7, #1
