@@ -36,9 +36,7 @@ filtermsg:
 
 main:
 	LDR R0, =hellomsg
-	PUSH { LR }
-	BL printf
-	POP { LR } @print the hello message
+	BL printf @print the hello message
 
 preploop:
 	MOV R5, #10
@@ -57,7 +55,6 @@ printarrs:
 	LDR R0, =arr1msg
 	MOV R1, #elems
 	LDR R2, =arrA
-	PUSH { LR }
 	BL printarr @print array A
 	LDR R0, =arr2msg
 	MOV R1, #elems
@@ -67,18 +64,13 @@ printarrs:
 	MOV R1, #elems
 	LDR R2, =arrC
 	BL printarr @print array C
-	POP { LR }
 
 filter:
 	LDR R0, =filtermsg
-	PUSH { LR }
-	BL printf
-	POP { LR } @output the filter message
+	BL printf @output the filter message
 	LDR R0, =perc
 	LDR R1, =inpval
-	PUSH { LR }
-	BL scanf
-	POP { LR } @input what to filter
+	BL scanf @input what to filter
 	LDR R0, =inpval
 	LDR R0, [R0]
 	CMP R0, #'P' @compare with positive
@@ -106,20 +98,16 @@ outputfilt:
 outputfiltloop: @loop to output numbers in the filter
 	LDR R6, [R4], #4
 	MOV R0, R6
-	PUSH { LR }
 	BL sgn
 	CMP R0, R7 @compare the sign of the element to the filter
 	LDR R0, =perd
 	MOV R1, R6
 	BLEQ printf @print it if the signs are equal
-	POP { LR }
 	SUBS R5, #1 @subtract 1 from the counter
 	BNE outputfiltloop @continue the loop
 
 	LDR R0, =nl
-	PUSH { LR }
 	BL printf @print a newline
-	POP { LR }
 
 retplace:
 	MOV R7, #1 @ret
@@ -127,36 +115,30 @@ retplace:
 
 
 printarr:
-	PUSH { R4-R6 }
+	PUSH { R4-R6, LR }
 	MOV R4, R0
 	MOV R5, R1
 	MOV R6, R2
 	MOV R0, R4 @move all arguments out of registers r0-r3 and move in the output message
-	PUSH { LR }
 	BL printf @print the output message
-	POP { LR }
 
 printarrloop: @begin the loop to print an array
 	LDR R0, =perd
 	LDR R1, [R6], #4
-	PUSH { LR }
-	BL printf
-	POP { LR } @print all of the numbers in the array
+	BL printf @print all of the numbers in the array
 	SUBS R5, #1 @subtract 1 from the counter
 	BNE printarrloop @continue the loop
 
 	LDR R0, =nl
-	PUSH { LR }
-	BL printf
-	POP { LR } @print a newline
-	POP { R4-R6 }
+	BL printf @print a newline
+	POP { R4-R6, PC }
 	BX LR @ret
 
 sgn:
 	CMP R0, #0
 	MOVGT R0, #1 @move in 1 if r0>0
 	MOVLT R0, #-1 @move in -1 if r0<0
-	BX LR @otherwise r0=0, so do nothing, and return
+	MOV PC, LR @otherwise r0=0, so do nothing, and return
 
 .global printf
 .global scanf
